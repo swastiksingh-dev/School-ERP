@@ -33,19 +33,7 @@ jobs:
 
       # ─── SPA fix: 404.html stores the requested URL in sessionStorage
       # and redirects to index.html, which restores the URL before React mounts.
-      - run: |
-          cat > dist/404.html << 'EOF'
-          <!doctype html>
-          <html>
-          <head><meta charset="utf-8"><title>Redirecting…</title></head>
-          <body>
-            <script>
-              sessionStorage.setItem('gh-pages-spa', location.href);
-              location.replace('/School-ERP/');
-            </script>
-          </body>
-          </html>
-          EOF
+      - run: printf '<!doctype html><html><head><meta charset="utf-8"><title>Redirecting...</title></head><body><script>sessionStorage.setItem("gh-pages-spa",location.href);location.replace("/School-ERP/");</script></body></html>' > dist/404.html
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
