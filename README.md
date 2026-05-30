@@ -27,6 +27,12 @@ npm run dev
 
 → Open **http://localhost:5173**
 
+## 🌐 Live Demo
+
+The app is automatically deployed to GitHub Pages on every push:
+
+**https://swastiksingh-dev.github.io/School-ERP/**
+
 ## 📖 Full Setup Guide
 
 See [SETUP.md](SETUP.md) for:
