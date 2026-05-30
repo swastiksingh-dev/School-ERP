@@ -4,17 +4,35 @@
   "version": "2.0.0",
   "type": "module",
   "description": "A comprehensive Educational Resource Planning system with three panels (Student, Teacher, Admin), demo mode, AI integration, and bug reporting.",
-  "keywords": ["erp", "school-management", "education", "react", "typescript", "vite", "tailwind-css", "zustand", "framer-motion", "recharts"],
+  "keywords": [
+    "erp",
+    "school-management",
+    "education",
+    "react",
+    "typescript",
+    "vite",
+    "tailwind-css",
+    "zustand",
+    "framer-motion",
+    "recharts"
+  ],
   "homepage": "https://github.com/Next-Token-AI/bbps-erp#readme",
-  "bugs": { "url": "https://github.com/Next-Token-AI/bbps-erp/issues" },
-  "repository": { "type": "git", "url": "git+https://github.com/Next-Token-AI/bbps-erp.git" },
+  "bugs": {
+    "url": "https://github.com/Next-Token-AI/bbps-erp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Next-Token-AI/bbps-erp.git"
+  },
   "author": "Next-Token-AI (https://www.youtube.com/@Next-Token-AI)",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "predeploy": "npm run build && node -e \"require('fs').copyFileSync('dist/index.html','dist/404.html')\"",
+    "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.8",
@@ -37,6 +55,7 @@
     "eslint": "^9.16.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
+    "gh-pages": "^6.3.0",
     "globals": "^15.13.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
