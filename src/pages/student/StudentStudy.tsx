@@ -54,12 +54,10 @@ function getDaysRemaining(dateStr: string): number {
 }
 
 function getSubjectCompletion(resources: ContentResource[], subject: string) {
-  const total = resources.length;
-  const done = resources.filter((r) => r.type !== 'reference').length;
   const subj = resources.filter((r) => r.subject === subject);
   const subjTotal = subj.length;
   const subjDone = subj.filter((r) => r.type !== 'reference').length;
-  return { total, done, pct: subjTotal > 0 ? Math.round((subjDone / subjTotal) * 100) : 0 };
+  return { pct: subjTotal > 0 ? Math.round((subjDone / subjTotal) * 100) : 0 };
 }
 
 const BOOKMARKS_KEY = 'bbps-study-bookmarks';
@@ -452,21 +450,21 @@ function PomodoroTimer() {
   const pct = 1 - totalSeconds / (25 * 60);
 
   useEffect(() => {
-    if (running && totalSeconds > 0) {
-      interval.current = setInterval(() => {
-        setSeconds((s) => {
-          if (s === 0) {
-            setMinutes((m) => {
-              if (m === 0) { setRunning(false); return 0; }
-              return m - 1;
-            });
-            return 59;
-          }
-          return s - 1;
-        });
-      }, 1000);
-    }
+    if (!running || totalSeconds <= 0) return;
+    interval.current = setInterval(() => {
+      setSeconds((s) => {
+        if (s === 0) {
+          setMinutes((m) => m - 1);
+          return 59;
+        }
+        return s - 1;
+      });
+    }, 1000);
     return () => { if (interval.current) clearInterval(interval.current); };
+  }, [running, totalSeconds]);
+
+  useEffect(() => {
+    if (running && totalSeconds <= 0) setRunning(false);
   }, [running, totalSeconds]);
 
   const start = () => { if (totalSeconds === 0) { setMinutes(25); setSeconds(0); } setRunning(true); };

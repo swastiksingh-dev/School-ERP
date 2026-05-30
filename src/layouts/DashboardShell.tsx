@@ -28,7 +28,6 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { PageTransition } from '../components/PageTransition';
 import { Button } from '../components/ui/Button';
-import BugReportModal from '../components/BugReportModal';
 import { useAuth } from '../hooks/useAuth';
 import type { UserRole } from '../types';
 
@@ -212,8 +211,7 @@ export function DashboardShell({ role }: { role: UserRole }) {
           ))}
         </nav>
 
-        {/* ─── Global Bug Report FAB ─── */}
-        <BugReportModal />
+
       </div>
     </div>
   );

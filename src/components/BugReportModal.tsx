@@ -24,7 +24,7 @@ const severityColors = {
   critical: 'text-red-500 border-red-300 bg-red-50 dark:bg-red-900/20',
 };
 
-export default function BugReportModal() {
+export default function BugReportModal({ inline = false }: { inline?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -62,17 +62,27 @@ export default function BugReportModal() {
 
   return (
     <>
-      {/* ─── FAB Button ─── */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-brand-600 text-white rounded-full shadow-lg hover:bg-brand-700 transition-all duration-200 group"
-        title="Report a bug"
-      >
-        <Bug className="w-5 h-5" />
-        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap text-sm font-medium">
-          Report Bug
-        </span>
-      </button>
+      {/* ─── Trigger Button ─── */}
+      {inline ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border-2 border-dashed border-red-300 bg-red-50/50 px-6 py-5 text-sm font-semibold text-red-700 transition-all hover:border-red-400 hover:bg-red-50 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300 dark:hover:border-red-700 dark:hover:bg-red-900/30"
+        >
+          <Bug className="h-5 w-5" />
+          Report a Bug / Give Feedback
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-brand-600 text-white rounded-full shadow-lg hover:bg-brand-700 transition-all duration-200 group"
+          title="Report a bug"
+        >
+          <Bug className="w-5 h-5" />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap text-sm font-medium">
+            Report Bug
+          </span>
+        </button>
+      )}
 
       {/* ─── Modal ─── */}
       <AnimatePresence>

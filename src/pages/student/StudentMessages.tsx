@@ -58,7 +58,8 @@ export function StudentMessages() {
   const [search, setSearch] = useState('');
   const [text, setText] = useState('');
   const [showChat, setShowChat] = useState(false);
-  const [messageSearch, setMessageSearch] = useState('');
+  const [showMessageSearch, setShowMessageSearch] = useState(false);
+  const [messageSearchQuery, setMessageSearchQuery] = useState('');
   const [emojiOpen, setEmojiOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,10 +79,10 @@ export function StudentMessages() {
   });
 
   const filteredMessages = useMemo(() => {
-    if (!messageSearch.trim()) return messages;
-    const q = messageSearch.toLowerCase();
+    if (!messageSearchQuery.trim()) return messages;
+    const q = messageSearchQuery.toLowerCase();
     return messages?.filter((m) => m.text.toLowerCase().includes(q));
-  }, [messages, messageSearch]);
+  }, [messages, messageSearchQuery]);
 
   const isOnline = (chatId: string) => {
     const hash = chatId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
@@ -269,7 +270,7 @@ export function StudentMessages() {
                       </h3>
                       <button
                         type="button"
-                        onClick={() => setMessageSearch((s) => (s ? '' : 'Search'))}
+                        onClick={() => setShowMessageSearch((s) => !s)}
                         className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
                         <Search className="h-3.5 w-3.5" />
@@ -281,13 +282,13 @@ export function StudentMessages() {
                     </p>
                   </div>
                 </div>
-                {messageSearch && (
+                {showMessageSearch && (
                   <div className="border-b border-slate-200 px-4 py-2 dark:border-slate-800">
                     <div className="relative">
                       <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
                       <input
-                        value={messageSearch === 'Search' ? '' : messageSearch}
-                        onChange={(e) => setMessageSearch(e.target.value)}
+                        value={messageSearchQuery}
+                        onChange={(e) => setMessageSearchQuery(e.target.value)}
                         placeholder="Search in chat…"
                         className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-xs text-slate-900 placeholder-slate-400 dark:border-slate-700 dark:bg-slate-800/50 dark:text-white dark:placeholder-slate-500"
                         autoFocus
@@ -351,7 +352,7 @@ export function StudentMessages() {
                           </motion.div>
                         );
                       })}
-                      {filteredMessages?.length === 0 && messageSearch && (
+                      {filteredMessages?.length === 0 && showMessageSearch && (
                         <div className="py-8 text-center text-sm text-slate-400">No messages match your search.</div>
                       )}
                       <div ref={messagesEndRef} />
@@ -376,7 +377,7 @@ export function StudentMessages() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.95 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute bottom-12 left-0 z-50 w-56 rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+                          className="absolute bottom-12 left-0 right-0 z-50 mx-auto w-56 rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-700 dark:bg-slate-900 sm:left-0 sm:right-auto"
                         >
                           <div className="grid grid-cols-5 gap-1">
                             {RECENT_EMOJIS.map((emoji) => (

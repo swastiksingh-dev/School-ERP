@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import BugReportModal from '../../components/BugReportModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Images,
@@ -23,6 +24,7 @@ import {
   CheckCircle,
   XCircle,
   Building,
+  Bug,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card } from '../../components/ui/Card';
@@ -140,6 +142,15 @@ function GallerySection() {
   const data = items ?? galleryItems;
   return (
     <>
+      <div className="mb-3 flex items-center gap-3 rounded-xl border border-brand-100 bg-brand-50/50 p-3 dark:border-brand-900/30 dark:bg-brand-900/20">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-sm ring-1 ring-black/10">
+          <img src="/logo.jpeg" alt="School Logo" className="h-full w-full object-cover" />
+        </div>
+        <div>
+          <p className="font-display text-sm font-bold text-slate-900 dark:text-white">Blooming Bud Public School</p>
+          <p className="text-xs text-slate-500">Est. 2002 · CBSE Affiliated</p>
+        </div>
+      </div>
       <div className="grid grid-cols-3 gap-2">
         {data.slice(0, 6).map((item) => (
           <button
@@ -620,6 +631,7 @@ const sections = [
   { id: 'social', title: 'Social Links', icon: Share2, component: SocialSection },
   { id: 'timetable', title: 'Timetable Quick View', icon: Calendar, component: TimetableQuickSection },
   { id: 'hostel', title: 'Hostel Info', icon: Building, component: HostelInfoSection },
+  { id: 'bugreport', title: 'Report Bug', icon: Bug, component: () => <BugReportModal inline /> },
 ];
 
 import toast from 'react-hot-toast';

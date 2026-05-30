@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Activity, Bell, Plus, Users2, FileText, ClipboardList, CalendarDays } from 'lucide-react';
+import { Activity, Bell, Plus, Users, FileText, ClipboardList, CalendarDays } from 'lucide-react';
 import { Pie, PieChart, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -61,7 +61,7 @@ export function AdminHome() {
                   {k.suffix ?? ''}
                 </p>
               </div>
-              <Users2 className="h-5 w-5 text-slate-400" />
+              <Users className="h-5 w-5 text-slate-400" />
             </div>
           </Card>
         ))}

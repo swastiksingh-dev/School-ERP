@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { ResponsiveContainer, Tooltip, XAxis, YAxis, AreaChart, Area } from 'recharts';
-import { Award, BookOpen, Calendar, CalendarCheck, CheckSquare, Clock, FileText, GraduationCap, PlusCircle, ScrollText, Star, Target, Users } from 'lucide-react';
+import { Award, BookOpen, Calendar, CalendarCheck, CheckSquare, Clock, FileText, GraduationCap, PlusCircle, ScrollText, Star, Target } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { STAGGER } from '../../constants/animations';
@@ -98,7 +98,7 @@ export function TeacherHome() {
           { label: 'Students', value: totalStudents, icon: Users, color: 'bg-brand-100 text-brand-700' },
           { label: 'Active Assignments', value: activeAssignments, icon: BookOpen, color: 'bg-blue-100 text-blue-700' },
           { label: 'Classes Today', value: todaySlots.length, icon: Clock, color: 'bg-amber-100 text-amber-700' },
-          { label: 'Exams Upcoming', value: '2', icon: GraduationCap, color: 'bg-purple-100 text-purple-700' },
+          { label: 'Exams Upcoming', value: upcomingExamsCount, icon: GraduationCap, color: 'bg-purple-100 text-purple-700' },
         ].map((s) => (
           <Card key={s.label} interactive>
             <div className="flex items-center justify-between">
