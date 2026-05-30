@@ -2,6 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- ─── SPA redirect handler for GitHub Pages ───
+    On first load from 404.html, the original URL is stored in sessionStorage
+    and the user is redirected here. This script restores the real URL before
+    React mounts so the router picks it up correctly. -->
+    <script>
+      (function() {
+        var redirect = sessionStorage.getItem('gh-pages-spa');
+        if (redirect) {
+          sessionStorage.removeItem('gh-pages-spa');
+          if (redirect !== location.href) {
+            history.replaceState(null, '', redirect);
+          }
+        }
+      })();
+    </script>
     <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="BBPS ERP — A comprehensive Educational Resource Planning system for Blooming Bud Public School. Three user panels (Student, Teacher, Admin) with role-based access, AI integration, and demo mode." />

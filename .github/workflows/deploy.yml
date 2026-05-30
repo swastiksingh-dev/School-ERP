@@ -31,9 +31,21 @@ jobs:
 
       - run: npm run build
 
-      # ─── SPA fix: copy index.html to 404.html so GitHub Pages
-      # serves the app for all client-side routes (login, /student, etc.)
-      - run: cp dist/index.html dist/404.html
+      # ─── SPA fix: 404.html stores the requested URL in sessionStorage
+      # and redirects to index.html, which restores the URL before React mounts.
+      - run: |
+          cat > dist/404.html << 'EOF'
+          <!doctype html>
+          <html>
+          <head><meta charset="utf-8"><title>Redirecting…</title></head>
+          <body>
+            <script>
+              sessionStorage.setItem('gh-pages-spa', location.href);
+              location.replace('/School-ERP/');
+            </script>
+          </body>
+          </html>
+          EOF
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
