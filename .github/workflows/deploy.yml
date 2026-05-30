@@ -31,6 +31,10 @@ jobs:
 
       - run: npm run build
 
+      # ─── SPA fix: copy index.html to 404.html so GitHub Pages
+      # serves the app for all client-side routes (login, /student, etc.)
+      - run: cp dist/index.html dist/404.html
+
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
