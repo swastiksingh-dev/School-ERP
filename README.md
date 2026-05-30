@@ -20,7 +20,7 @@ A full-featured open-source Educational Resource Planning system with three role
 
 ```bash
 git clone https://github.com/swastiksingh-dev/School-ERP.git
-cd bbps-erp
+cd School-ERP
 npm install
 npm run dev
 ```
@@ -62,7 +62,7 @@ Website: [Next-Token-AI](https://nexttokenai.unaux.com/)
 
 ## 🔗 Links
 
-- **Repository:** [github.com/swastiksingh-dev/School-ERP](https://github.com/swastiksingh-dev/School-ERP)
+- **Website:** [swastiksingh-dev.github.io/School-ERP](https://swastiksingh-dev.github.io/School-ERP/)
 - **YouTube:** [@Next-Token-AI](https://www.youtube.com/@Next-Token-AI)
 
 ## 📄 License

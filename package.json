@@ -16,13 +16,13 @@
     "framer-motion",
     "recharts"
   ],
-  "homepage": "https://github.com/Next-Token-AI/bbps-erp#readme",
+  "homepage": "https://swastiksingh-dev.github.io/School-ERP/",
   "bugs": {
-    "url": "https://github.com/Next-Token-AI/bbps-erp/issues"
+    "url": "https://github.com/swastiksingh-dev/School-ERP/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Next-Token-AI/bbps-erp.git"
+    "url": "git+https://github.com/swastiksingh-dev/School-ERP.git"
   },
   "author": "Next-Token-AI (https://www.youtube.com/@Next-Token-AI)",
   "license": "MIT",
