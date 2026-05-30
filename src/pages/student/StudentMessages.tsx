@@ -140,7 +140,8 @@ export function StudentMessages() {
   const selectChat = (chatId: string) => {
     setSelectedChatId(chatId);
     setShowChat(true);
-    setMessageSearch('');
+    setMessageSearchQuery('');
+    setShowMessageSearch(false);
   };
 
   if (chatsLoading) {

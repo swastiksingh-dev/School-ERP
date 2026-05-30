@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { ResponsiveContainer, Tooltip, XAxis, YAxis, AreaChart, Area } from 'recharts';
-import { Award, BookOpen, Calendar, CalendarCheck, CheckSquare, Clock, FileText, GraduationCap, PlusCircle, ScrollText, Star, Target } from 'lucide-react';
+import { Award, BookOpen, Calendar, CalendarCheck, CheckSquare, Clock, FileText, GraduationCap, PlusCircle, ScrollText, Star, Target, Users } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { STAGGER } from '../../constants/animations';
