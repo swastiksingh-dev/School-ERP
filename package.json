@@ -1,0 +1,47 @@
+{
+  "name": "bbps-erp",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "A comprehensive Educational Resource Planning system with three panels (Student, Teacher, Admin), demo mode, AI integration, and bug reporting.",
+  "keywords": ["erp", "school-management", "education", "react", "typescript", "vite", "tailwind-css", "zustand", "framer-motion", "recharts"],
+  "homepage": "https://github.com/Next-Token-AI/bbps-erp#readme",
+  "bugs": { "url": "https://github.com/Next-Token-AI/bbps-erp/issues" },
+  "repository": { "type": "git", "url": "git+https://github.com/Next-Token-AI/bbps-erp.git" },
+  "author": "Next-Token-AI (https://www.youtube.com/@Next-Token-AI)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.62.8",
+    "framer-motion": "^11.15.0",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.15.0",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.16.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.13.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "~5.6.3",
+    "typescript-eslint": "^8.16.0",
+    "vite": "^6.0.3"
+  }
+}

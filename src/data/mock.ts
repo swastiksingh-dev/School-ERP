@@ -1,0 +1,332 @@
+/* ─── mock ───
+ * Central in-memory mock data store for all entities (students, teachers,
+ * classes, assignments, exams, fees, etc.) and helper query functions.
+ */
+
+import type {
+  Student, Teacher, ClassSection, Subject, Assignment, Submission,
+  Exam, ExamResult, Attendance, TimetableSlot, Message, Chat,
+  Announcement, FeeInvoice, FeeTransaction, ContentResource,
+  GalleryItem, GatePass, DownloadItem, TransportRoute, ActivityLog,
+  AppUser,
+} from '../types';
+
+// ── Students ──
+export const students: Student[] = [
+  { id: 's1', userId: 'demo-student', firstName: 'Aarav', lastName: 'Sharma', email: 'aarav.sharma@bbps.edu', phone: '9876543210', classId: 'c1', rollNumber: '01', schoolId: 'BBPS-1001', parentName: 'Rajesh Sharma', parentPhone: '9876543001', address: '42 MG Road, Block A', emergencyContact: '9876543001', dob: '2008-05-12', bloodGroup: 'O+', avatar: undefined },
+  { id: 's2', userId: '', firstName: 'Priya', lastName: 'Patel', email: 'priya.patel@bbps.edu', phone: '9876543211', classId: 'c1', rollNumber: '02', schoolId: 'BBPS-1002', parentName: 'Anita Patel', parentPhone: '9876543002', address: '15 Lake View, Block B', emergencyContact: '9876543002', dob: '2008-08-23', bloodGroup: 'A+', avatar: undefined },
+  { id: 's3', userId: '', firstName: 'Rohan', lastName: 'Singh', email: 'rohan.singh@bbps.edu', phone: '9876543212', classId: 'c1', rollNumber: '03', schoolId: 'BBPS-1003', parentName: 'Gurpreet Singh', parentPhone: '9876543003', address: '88 Green Park', emergencyContact: '9876543003', dob: '2008-01-15', bloodGroup: 'B+', avatar: undefined },
+  { id: 's4', userId: '', firstName: 'Ananya', lastName: 'Gupta', email: 'ananya.gupta@bbps.edu', phone: '9876543213', classId: 'c1', rollNumber: '04', schoolId: 'BBPS-1004', parentName: 'Sunil Gupta', parentPhone: '9876543004', address: '7 Rose Garden Colony', emergencyContact: '9876543004', dob: '2008-11-30', bloodGroup: 'AB+', avatar: undefined },
+  { id: 's5', userId: '', firstName: 'Vikram', lastName: 'Joshi', email: 'vikram.joshi@bbps.edu', phone: '9876543214', classId: 'c2', rollNumber: '01', schoolId: 'BBPS-1005', parentName: 'Arun Joshi', parentPhone: '9876543005', address: '22 Silver Oak Avenue', emergencyContact: '9876543005', dob: '2007-03-19', bloodGroup: 'O-', avatar: undefined },
+  { id: 's6', userId: '', firstName: 'Isha', lastName: 'Nair', email: 'isha.nair@bbps.edu', phone: '9876543215', classId: 'c2', rollNumber: '02', schoolId: 'BBPS-1006', parentName: 'Mohan Nair', parentPhone: '9876543006', address: '34 Palm Grove Residency', emergencyContact: '9876543006', dob: '2007-07-08', bloodGroup: 'A-', avatar: undefined },
+  { id: 's7', userId: '', firstName: 'Arjun', lastName: 'Mehta', email: 'arjun.mehta@bbps.edu', phone: '9876543216', classId: 'c2', rollNumber: '03', schoolId: 'BBPS-1007', parentName: 'Neha Mehta', parentPhone: '9876543007', address: '56 Sunshine Apartments', emergencyContact: '9876543007', dob: '2007-09-14', bloodGroup: 'B-', avatar: undefined },
+  { id: 's8', userId: '', firstName: 'Kavya', lastName: 'Reddy', email: 'kavya.reddy@bbps.edu', phone: '9876543217', classId: 'c3', rollNumber: '01', schoolId: 'BBPS-1008', parentName: 'Suresh Reddy', parentPhone: '9876543008', address: '12 Lotus Nagar', emergencyContact: '9876543008', dob: '2009-02-28', bloodGroup: 'O+', avatar: undefined },
+  { id: 's9', userId: '', firstName: 'Dhruv', lastName: 'Kapoor', email: 'dhruv.kapoor@bbps.edu', phone: '9876543218', classId: 'c3', rollNumber: '02', schoolId: 'BBPS-1009', parentName: 'Ritu Kapoor', parentPhone: '9876543009', address: '9 Hill View Estate', emergencyContact: '9876543009', dob: '2009-06-05', bloodGroup: 'AB-', avatar: undefined },
+  { id: 's10', userId: '', firstName: 'Sara', lastName: 'Khan', email: 'sara.khan@bbps.edu', phone: '9876543219', classId: 'c3', rollNumber: '03', schoolId: 'BBPS-1010', parentName: 'Imran Khan', parentPhone: '9876543010', address: '18 Harmony Enclave', emergencyContact: '9876543010', dob: '2009-12-22', bloodGroup: 'A+', avatar: undefined },
+];
+
+// ── Teachers ──
+export const teachers: Teacher[] = [
+  { id: 't1', userId: 'demo-teacher', firstName: 'Priya', lastName: 'Verma', email: 'priya.verma@bbps.edu', phone: '9988776655', department: 'Science', subjects: ['Physics', 'Chemistry'], assignedClasses: ['c1', 'c2'], avatar: undefined },
+  { id: 't2', userId: '', firstName: 'Rajesh', lastName: 'Gupta', email: 'rajesh.gupta@bbps.edu', phone: '9988776644', department: 'Mathematics', subjects: ['Mathematics', 'Statistics'], assignedClasses: ['c1', 'c2', 'c3'], avatar: undefined },
+  { id: 't3', userId: '', firstName: 'Sunita', lastName: 'Singh', email: 'sunita.singh@bbps.edu', phone: '9988776633', department: 'English', subjects: ['English', 'Literature'], assignedClasses: ['c1', 'c2', 'c3'], avatar: undefined },
+  { id: 't4', userId: '', firstName: 'Amit', lastName: 'Joshi', email: 'amit.joshi@bbps.edu', phone: '9988776622', department: 'Physical Education', subjects: ['Physical Education'], assignedClasses: ['c1', 'c2', 'c3'], avatar: undefined },
+  { id: 't5', userId: '', firstName: 'Deepa', lastName: 'Iyer', email: 'deepa.iyer@bbps.edu', phone: '9988776611', department: 'Computer Science', subjects: ['Computer Science'], assignedClasses: ['c1', 'c2'], avatar: undefined },
+];
+
+// ── Subjects ──
+export const subjects: Subject[] = [
+  { id: 'sub1', name: 'Mathematics', code: 'MTH10', classId: 'c1', teacherId: 't2', teacherName: 'Rajesh Gupta' },
+  { id: 'sub2', name: 'Physics', code: 'PHY10', classId: 'c1', teacherId: 't1', teacherName: 'Priya Verma' },
+  { id: 'sub3', name: 'Chemistry', code: 'CHM10', classId: 'c1', teacherId: 't1', teacherName: 'Priya Verma' },
+  { id: 'sub4', name: 'English', code: 'ENG10', classId: 'c1', teacherId: 't3', teacherName: 'Sunita Singh' },
+  { id: 'sub5', name: 'Computer Science', code: 'CSC10', classId: 'c1', teacherId: 't5', teacherName: 'Deepa Iyer' },
+  { id: 'sub6', name: 'Mathematics', code: 'MTH09', classId: 'c2', teacherId: 't2', teacherName: 'Rajesh Gupta' },
+  { id: 'sub7', name: 'Science', code: 'SCI09', classId: 'c2', teacherId: 't1', teacherName: 'Priya Verma' },
+  { id: 'sub8', name: 'English', code: 'ENG09', classId: 'c2', teacherId: 't3', teacherName: 'Sunita Singh' },
+  { id: 'sub9', name: 'Mathematics', code: 'MTH08', classId: 'c3', teacherId: 't2', teacherName: 'Rajesh Gupta' },
+  { id: 'sub10', name: 'Science', code: 'SCI08', classId: 'c3', teacherId: 't1', teacherName: 'Priya Verma' },
+  { id: 'sub11', name: 'English', code: 'ENG08', classId: 'c3', teacherId: 't3', teacherName: 'Sunita Singh' },
+];
+
+// ── Classes ──
+export const classes: ClassSection[] = [
+  { id: 'c1', name: '10-A', grade: 10, section: 'A', room: 'A-201', studentCount: 4, classTeacherId: 't2', classTeacherName: 'Rajesh Gupta', subjects: subjects.filter(s => s.classId === 'c1') },
+  { id: 'c2', name: '9-B', grade: 9, section: 'B', room: 'B-105', studentCount: 3, classTeacherId: 't1', classTeacherName: 'Priya Verma', subjects: subjects.filter(s => s.classId === 'c2') },
+  { id: 'c3', name: '8-A', grade: 8, section: 'A', room: 'A-103', studentCount: 3, classTeacherId: 't3', classTeacherName: 'Sunita Singh', subjects: subjects.filter(s => s.classId === 'c3') },
+];
+
+// ── Assignments ──
+export const assignments: Assignment[] = [
+  { id: 'a1', title: 'Quadratic Equations Practice', description: 'Solve 20 problems from Chapter 4. Show all steps clearly.', classId: 'c1', subjectId: 'sub1', subject: 'Mathematics', teacherId: 't2', teacherName: 'Rajesh Gupta', dueDate: '2026-06-05', createdAt: '2026-05-28', maxScore: 100, attachments: [], status: 'active' },
+  { id: 'a2', title: 'Newton\'s Laws Lab Report', description: 'Write a lab report based on the experiment conducted in class.', classId: 'c1', subjectId: 'sub2', subject: 'Physics', teacherId: 't1', teacherName: 'Priya Verma', dueDate: '2026-06-07', createdAt: '2026-05-30', maxScore: 50, attachments: [], status: 'active' },
+  { id: 'a3', title: 'Essay on Climate Change', description: 'Write a 500-word essay on the impact of climate change.', classId: 'c1', subjectId: 'sub4', subject: 'English', teacherId: 't3', teacherName: 'Sunita Singh', dueDate: '2026-06-10', createdAt: '2026-06-01', maxScore: 75, attachments: [], status: 'active' },
+  { id: 'a4', title: 'Periodic Table Quiz Prep', description: 'Memorize the first 30 elements. Quiz on Friday.', classId: 'c1', subjectId: 'sub3', subject: 'Chemistry', teacherId: 't1', teacherName: 'Priya Verma', dueDate: '2026-06-04', createdAt: '2026-05-29', maxScore: 30, attachments: [], status: 'active' },
+  { id: 'a5', title: 'HTML Basics Assignment', description: 'Create a personal webpage using HTML5 semantic tags.', classId: 'c1', subjectId: 'sub5', subject: 'Computer Science', teacherId: 't5', teacherName: 'Deepa Iyer', dueDate: '2026-06-12', createdAt: '2026-06-02', maxScore: 100, attachments: [], status: 'active' },
+  { id: 'a6', title: 'Algebra Fundamentals', description: 'Complete exercises 1–10 from Chapter 2.', classId: 'c2', subjectId: 'sub6', subject: 'Mathematics', teacherId: 't2', teacherName: 'Rajesh Gupta', dueDate: '2026-06-06', createdAt: '2026-05-30', maxScore: 50, attachments: [], status: 'active' },
+  { id: 'a7', title: 'Grammar Worksheet', description: 'Complete the tenses and voice exercises.', classId: 'c2', subjectId: 'sub8', subject: 'English', teacherId: 't3', teacherName: 'Sunita Singh', dueDate: '2026-06-08', createdAt: '2026-06-01', maxScore: 40, attachments: [], status: 'active' },
+  { id: 'a8', title: 'Cell Structure Diagram', description: 'Draw and label a plant and animal cell.', classId: 'c3', subjectId: 'sub10', subject: 'Science', teacherId: 't1', teacherName: 'Priya Verma', dueDate: '2026-06-09', createdAt: '2026-06-02', maxScore: 30, attachments: [], status: 'active' },
+];
+
+// ── Submissions ──
+export const submissions: Submission[] = [
+  { id: 'subm1', assignmentId: 'a1', studentId: 's1', studentName: 'Aarav Sharma', submittedAt: '2026-06-03T14:30:00', content: 'All 20 problems solved with steps.', attachments: [], score: 92, feedback: 'Excellent work! Could show more intermediate steps.', gradedAt: '2026-06-04T10:00:00', status: 'graded' },
+  { id: 'subm2', assignmentId: 'a1', studentId: 's2', studentName: 'Priya Patel', submittedAt: '2026-06-04T09:15:00', content: 'Completed all problems.', attachments: [], score: 88, feedback: 'Good effort. Review problem 15.', gradedAt: '2026-06-04T10:05:00', status: 'graded' },
+  { id: 'subm3', assignmentId: 'a4', studentId: 's1', studentName: 'Aarav Sharma', submittedAt: '2026-06-03T16:00:00', content: 'Memorized and ready for quiz.', attachments: [], score: 28, feedback: 'Great! Missed 2 elements.', gradedAt: '2026-06-04T11:00:00', status: 'graded' },
+  { id: 'subm4', assignmentId: 'a1', studentId: 's3', studentName: 'Rohan Singh', submittedAt: '2026-06-04T22:45:00', content: 'Submitted just in time.', attachments: [], status: 'submitted' },
+  { id: 'subm5', assignmentId: 'a2', studentId: 's1', studentName: 'Aarav Sharma', submittedAt: '2026-06-05T11:20:00', content: 'Lab report attached with observations and conclusion.', attachments: [], status: 'submitted' },
+];
+
+// ── Exams ──
+export const exams: Exam[] = [
+  { id: 'e1', title: 'Midterm Mathematics', description: 'Covers chapters 1–5', classId: 'c1', subjectId: 'sub1', subject: 'Mathematics', date: '2026-06-15', duration: 120, maxMarks: 100, type: 'midterm', status: 'upcoming' },
+  { id: 'e2', title: 'Physics Unit Test', description: 'Chapter 3: Motion', classId: 'c1', subjectId: 'sub2', subject: 'Physics', date: '2026-06-10', duration: 60, maxMarks: 50, type: 'unit_test', status: 'upcoming' },
+  { id: 'e3', title: 'Term 1 English Exam', description: 'Full syllabus', classId: 'c1', subjectId: 'sub4', subject: 'English', date: '2026-05-20', duration: 180, maxMarks: 100, type: 'final', status: 'completed' },
+  { id: 'e4', title: 'Chemistry Quiz', description: 'Periodic Table', classId: 'c1', subjectId: 'sub3', subject: 'Chemistry', date: '2026-05-25', duration: 30, maxMarks: 30, type: 'quiz', status: 'completed' },
+  { id: 'e5', title: 'Math Quiz 1', description: 'Quadratic Equations', classId: 'c2', subjectId: 'sub6', subject: 'Mathematics', date: '2026-06-12', duration: 45, maxMarks: 30, type: 'quiz', status: 'upcoming' },
+];
+
+// ── Exam Results ──
+export const examResults: ExamResult[] = [
+  { id: 'er1', examId: 'e3', examTitle: 'Term 1 English Exam', studentId: 's1', studentName: 'Aarav Sharma', subject: 'English', score: 85, maxMarks: 100, percentage: 85, grade: 'A', rank: 2 },
+  { id: 'er2', examId: 'e3', examTitle: 'Term 1 English Exam', studentId: 's2', studentName: 'Priya Patel', subject: 'English', score: 91, maxMarks: 100, percentage: 91, grade: 'A+', rank: 1 },
+  { id: 'er3', examId: 'e3', examTitle: 'Term 1 English Exam', studentId: 's3', studentName: 'Rohan Singh', subject: 'English', score: 72, maxMarks: 100, percentage: 72, grade: 'B+', rank: 3 },
+  { id: 'er4', examId: 'e4', examTitle: 'Chemistry Quiz', studentId: 's1', studentName: 'Aarav Sharma', subject: 'Chemistry', score: 28, maxMarks: 30, percentage: 93.3, grade: 'A+' },
+  { id: 'er5', examId: 'e4', examTitle: 'Chemistry Quiz', studentId: 's2', studentName: 'Priya Patel', subject: 'Chemistry', score: 25, maxMarks: 30, percentage: 83.3, grade: 'A' },
+  { id: 'er6', examId: 'e4', examTitle: 'Chemistry Quiz', studentId: 's3', studentName: 'Rohan Singh', subject: 'Chemistry', score: 22, maxMarks: 30, percentage: 73.3, grade: 'B+' },
+];
+
+// ── Attendance ──
+export const attendanceRecords: Attendance[] = [
+  { id: 'att1', studentId: 's1', date: '2026-06-01', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att2', studentId: 's1', date: '2026-06-02', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att3', studentId: 's1', date: '2026-06-03', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att4', studentId: 's1', date: '2026-06-04', status: 'late', classId: 'c1', markedBy: 't2' },
+  { id: 'att5', studentId: 's1', date: '2026-06-05', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att6', studentId: 's1', date: '2026-06-06', status: 'absent', classId: 'c1', markedBy: 't2' },
+  { id: 'att7', studentId: 's1', date: '2026-06-07', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att8', studentId: 's2', date: '2026-06-01', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att9', studentId: 's2', date: '2026-06-02', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att10', studentId: 's2', date: '2026-06-03', status: 'absent', classId: 'c1', markedBy: 't2' },
+  { id: 'att11', studentId: 's2', date: '2026-06-04', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att12', studentId: 's2', date: '2026-06-05', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att13', studentId: 's3', date: '2026-06-01', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att14', studentId: 's3', date: '2026-06-02', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att15', studentId: 's3', date: '2026-06-03', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att16', studentId: 's3', date: '2026-06-04', status: 'present', classId: 'c1', markedBy: 't2' },
+  { id: 'att17', studentId: 's3', date: '2026-06-05', status: 'late', classId: 'c1', markedBy: 't2' },
+];
+
+// ── Timetable ──
+export const timetableSlots: TimetableSlot[] = [
+  { id: 'tt1', classId: 'c1', day: 'Monday', startTime: '09:00', endTime: '09:50', subject: 'Mathematics', teacher: 'Rajesh Gupta', room: 'A-201' },
+  { id: 'tt2', classId: 'c1', day: 'Monday', startTime: '10:00', endTime: '10:50', subject: 'Physics', teacher: 'Priya Verma', room: 'Lab-2' },
+  { id: 'tt3', classId: 'c1', day: 'Monday', startTime: '11:15', endTime: '12:05', subject: 'English', teacher: 'Sunita Singh', room: 'A-105' },
+  { id: 'tt4', classId: 'c1', day: 'Monday', startTime: '12:45', endTime: '13:35', subject: 'Physical Education', teacher: 'Amit Joshi', room: 'Ground' },
+  { id: 'tt5', classId: 'c1', day: 'Tuesday', startTime: '09:00', endTime: '09:50', subject: 'Chemistry', teacher: 'Priya Verma', room: 'A-201' },
+  { id: 'tt6', classId: 'c1', day: 'Tuesday', startTime: '10:00', endTime: '10:50', subject: 'Computer Science', teacher: 'Deepa Iyer', room: 'Computer Lab' },
+  { id: 'tt7', classId: 'c1', day: 'Tuesday', startTime: '11:15', endTime: '12:05', subject: 'Mathematics', teacher: 'Rajesh Gupta', room: 'A-201' },
+  { id: 'tt8', classId: 'c1', day: 'Wednesday', startTime: '09:00', endTime: '09:50', subject: 'English', teacher: 'Sunita Singh', room: 'A-105' },
+  { id: 'tt9', classId: 'c1', day: 'Wednesday', startTime: '10:00', endTime: '10:50', subject: 'Mathematics', teacher: 'Rajesh Gupta', room: 'A-201' },
+  { id: 'tt10', classId: 'c1', day: 'Wednesday', startTime: '11:15', endTime: '12:05', subject: 'Physics', teacher: 'Priya Verma', room: 'Lab-2' },
+  { id: 'tt11', classId: 'c1', day: 'Thursday', startTime: '09:00', endTime: '09:50', subject: 'Computer Science', teacher: 'Deepa Iyer', room: 'Computer Lab' },
+  { id: 'tt12', classId: 'c1', day: 'Thursday', startTime: '10:00', endTime: '10:50', subject: 'Chemistry', teacher: 'Priya Verma', room: 'A-201' },
+  { id: 'tt13', classId: 'c1', day: 'Thursday', startTime: '11:15', endTime: '12:05', subject: 'Physical Education', teacher: 'Amit Joshi', room: 'Ground' },
+  { id: 'tt14', classId: 'c1', day: 'Friday', startTime: '09:00', endTime: '09:50', subject: 'Mathematics', teacher: 'Rajesh Gupta', room: 'A-201' },
+  { id: 'tt15', classId: 'c1', day: 'Friday', startTime: '10:00', endTime: '10:50', subject: 'English', teacher: 'Sunita Singh', room: 'A-105' },
+  { id: 'tt16', classId: 'c1', day: 'Friday', startTime: '11:15', endTime: '12:05', subject: 'Chemistry', teacher: 'Priya Verma', room: 'A-201' },
+];
+
+// ── Chats & Messages ──
+export const chats: Chat[] = [
+  { id: 'ch1', participants: [{ id: 't1', name: 'Priya Verma' }, { id: 's1', name: 'Aarav Sharma' }], lastMessage: 'Please submit the lab report by Friday.', lastMessageTime: '2026-06-03T10:12:00', unreadCount: 0, type: 'individual' },
+  { id: 'ch2', participants: [{ id: 't2', name: 'Rajesh Gupta' }, { id: 's1', name: 'Aarav Sharma' }], lastMessage: 'Great work on the assignment!', lastMessageTime: '2026-06-04T10:30:00', unreadCount: 1, type: 'individual' },
+  { id: 'ch3', participants: [{ id: 't3', name: 'Sunita Singh' }, { id: 's1', name: 'Aarav Sharma' }], lastMessage: 'Remember to bring your textbook tomorrow.', lastMessageTime: '2026-06-02T15:45:00', unreadCount: 0, type: 'individual' },
+  { id: 'ch4', participants: [{ id: 's3', name: 'Rohan Singh' }, { id: 's1', name: 'Aarav Sharma' }], lastMessage: 'Did you finish the math homework?', lastMessageTime: '2026-06-04T20:15:00', unreadCount: 2, type: 'individual' },
+];
+
+export const messages: Message[] = [
+  { id: 'm1', chatId: 'ch1', senderId: 't1', senderName: 'Priya Verma', text: 'Please submit the lab report by Friday.', timestamp: '2026-06-03T10:12:00', read: true },
+  { id: 'm2', chatId: 'ch1', senderId: 's1', senderName: 'Aarav Sharma', text: 'Noted, I will upload it tonight.', timestamp: '2026-06-03T10:14:00', read: true },
+  { id: 'm3', chatId: 'ch1', senderId: 't1', senderName: 'Priya Verma', text: 'Thank you! Let me know if you have any questions.', timestamp: '2026-06-03T10:15:00', read: true },
+  { id: 'm4', chatId: 'ch2', senderId: 't2', senderName: 'Rajesh Gupta', text: 'Great work on the assignment!', timestamp: '2026-06-04T10:30:00', read: false },
+  { id: 'm5', chatId: 'ch2', senderId: 't2', senderName: 'Rajesh Gupta', text: 'You scored 92/100. Keep it up!', timestamp: '2026-06-04T10:31:00', read: false },
+  { id: 'm6', chatId: 'ch3', senderId: 't3', senderName: 'Sunita Singh', text: 'Remember to bring your textbook tomorrow.', timestamp: '2026-06-02T15:45:00', read: true },
+  { id: 'm7', chatId: 'ch4', senderId: 's3', senderName: 'Rohan Singh', text: 'Did you finish the math homework?', timestamp: '2026-06-04T20:15:00', read: false },
+  { id: 'm8', chatId: 'ch4', senderId: 's3', senderName: 'Rohan Singh', text: 'I am stuck on problem 12.', timestamp: '2026-06-04T20:16:00', read: false },
+];
+
+// ── Announcements ──
+export const announcements: Announcement[] = [
+  { id: 'an1', title: 'Winter Break Schedule', body: 'Winter break will commence from December 24 to January 2. School will reopen on January 3, 2027.', date: '2026-05-02', priority: 'high', target: 'all', author: 'School Administration', pinned: true },
+  { id: 'an2', title: 'PTM — Class 10', body: 'Parent-Teacher Meeting for Class 10 will be held on Saturday, May 6 at 10:00 AM in the auditorium.', date: '2026-05-06', priority: 'medium', target: 'class', targetClass: 'c1', author: 'Academic Office', pinned: false },
+  { id: 'an3', title: 'Library Week Celebration', body: 'Library week is being celebrated from May 10 to May 14. Students are encouraged to participate in book review competitions.', date: '2026-05-10', priority: 'low', target: 'all', author: 'Librarian', pinned: false },
+  { id: 'an4', title: 'Science Exhibition', body: 'Annual Science Exhibition on June 20. Students from classes 8–10 can submit their projects by June 10.', date: '2026-06-01', priority: 'high', target: 'all', author: 'Science Department', pinned: true },
+  { id: 'an5', title: 'Summer Camp Registration', body: 'Summer camp registrations are open. Activities include robotics, art, sports, and drama.', date: '2026-05-28', priority: 'medium', target: 'all', author: 'Activities Coordinator', pinned: false },
+];
+
+// ── Fee Management ──
+export const feeInvoices: FeeInvoice[] = [
+  { id: 'fi1', studentId: 's1', studentName: 'Aarav Sharma', amount: 25000, paid: 25000, dueDate: '2026-04-15', status: 'paid', items: [{ name: 'Tuition Fee', amount: 18000 }, { name: 'Library Fee', amount: 2000 }, { name: 'Sports Fee', amount: 3000 }, { name: 'Miscellaneous', amount: 2000 }] },
+  { id: 'fi2', studentId: 's1', studentName: 'Aarav Sharma', amount: 25000, paid: 15000, dueDate: '2026-07-15', status: 'partial', items: [{ name: 'Tuition Fee', amount: 18000 }, { name: 'Laboratory Fee', amount: 3000 }, { name: 'Transport Fee', amount: 4000 }] },
+  { id: 'fi3', studentId: 's2', studentName: 'Priya Patel', amount: 22000, paid: 22000, dueDate: '2026-04-15', status: 'paid', items: [{ name: 'Tuition Fee', amount: 18000 }, { name: 'Library Fee', amount: 2000 }, { name: 'Sports Fee', amount: 2000 }] },
+  { id: 'fi4', studentId: 's5', studentName: 'Vikram Joshi', amount: 30000, paid: 10000, dueDate: '2026-04-15', status: 'partial', items: [{ name: 'Tuition Fee', amount: 20000 }, { name: 'Transport Fee', amount: 5000 }, { name: 'Hostel Fee', amount: 5000 }] },
+  { id: 'fi5', studentId: 's8', studentName: 'Kavya Reddy', amount: 20000, paid: 0, dueDate: '2026-05-15', status: 'overdue', items: [{ name: 'Tuition Fee', amount: 18000 }, { name: 'Miscellaneous', amount: 2000 }] },
+];
+
+export const feeTransactions: FeeTransaction[] = [
+  { id: 'ft1', invoiceId: 'fi1', studentId: 's1', studentName: 'Aarav Sharma', amount: 25000, date: '2026-04-10', method: 'online', status: 'completed', receiptNo: 'RCP-2026-001' },
+  { id: 'ft2', invoiceId: 'fi2', studentId: 's1', studentName: 'Aarav Sharma', amount: 15000, date: '2026-06-01', method: 'online', status: 'completed', receiptNo: 'RCP-2026-015' },
+  { id: 'ft3', invoiceId: 'fi3', studentId: 's2', studentName: 'Priya Patel', amount: 22000, date: '2026-04-12', method: 'cash', status: 'completed', receiptNo: 'RCP-2026-003' },
+  { id: 'ft4', invoiceId: 'fi4', studentId: 's5', studentName: 'Vikram Joshi', amount: 10000, date: '2026-04-14', method: 'online', status: 'completed', receiptNo: 'RCP-2026-005' },
+  { id: 'ft5', invoiceId: 'fi1', studentId: 's1', studentName: 'Aarav Sharma', amount: 25000, date: '2026-04-10', method: 'online', status: 'completed', receiptNo: 'RCP-2026-001' },
+];
+
+// ── Content & Gallery ──
+export const contentResources: ContentResource[] = [
+  { id: 'cr1', title: 'Quadratic Equations Notes', description: 'Complete chapter notes with solved examples.', type: 'notes', classId: 'c1', subjectId: 'sub1', subject: 'Mathematics', url: '#', uploadedBy: 'Rajesh Gupta', uploadedAt: '2026-05-15', fileSize: '2.3 MB', tags: ['algebra', 'equations', 'quadratic'] },
+  { id: 'cr2', title: 'Newton\'s Laws Video Lecture', description: 'Recorded lecture covering all three laws with demonstrations.', type: 'video', classId: 'c1', subjectId: 'sub2', subject: 'Physics', url: '#', thumbnail: 'https://img.youtube.com/vi/example/mqdefault.jpg', uploadedBy: 'Priya Verma', uploadedAt: '2026-05-20', fileSize: '45 MB', tags: ['mechanics', 'forces', 'motion'] },
+  { id: 'cr3', title: 'Periodic Table Reference Sheet', description: 'Printable periodic table with element details.', type: 'reference', classId: 'c1', subjectId: 'sub3', subject: 'Chemistry', url: '#', uploadedBy: 'Priya Verma', uploadedAt: '2026-05-10', fileSize: '500 KB', tags: ['periodic-table', 'elements'] },
+  { id: 'cr4', title: 'English Grammar Workbook', description: 'Comprehensive workbook covering tenses, voice, and narration.', type: 'notes', classId: 'c1', subjectId: 'sub4', subject: 'English', url: '#', uploadedBy: 'Sunita Singh', uploadedAt: '2026-05-25', fileSize: '5.1 MB', tags: ['grammar', 'tenses', 'voice'] },
+  { id: 'cr5', title: 'HTML & CSS Basics', description: 'Introduction to web development with examples.', type: 'notes', classId: 'c1', subjectId: 'sub5', subject: 'Computer Science', url: '#', uploadedBy: 'Deepa Iyer', uploadedAt: '2026-06-01', fileSize: '3.7 MB', tags: ['html', 'css', 'web'] },
+  { id: 'cr6', title: 'YouTube - Khan Academy Algebra', description: 'Playlist of algebra tutorials.', type: 'reference', classId: 'c1', subjectId: 'sub1', subject: 'Mathematics', url: '#', uploadedBy: 'Rajesh Gupta', uploadedAt: '2026-05-01', tags: ['algebra', 'tutorials'] },
+];
+
+export const galleryItems: GalleryItem[] = [
+  { id: 'g1', title: 'Annual Day Celebration', url: '/gallery%20images/img1.png', date: '2026-03-15', category: 'Events' },
+  { id: 'g2', title: 'Science Fair 2026', url: '/gallery%20images/img2.png', date: '2026-02-20', category: 'Events' },
+  { id: 'g3', title: 'Sports Day', url: '/gallery%20images/img3.png', date: '2026-01-10', category: 'Sports' },
+  { id: 'g4', title: 'Class 10 Group Photo', url: '/gallery%20images/img4.png', date: '2026-04-05', category: 'Classes' },
+  { id: 'g5', title: 'Art Competition Winners', url: '/gallery%20images/img5.png', date: '2026-03-01', category: 'Arts' },
+  { id: 'g6', title: 'Library Week', url: '/gallery%20images/img6.png', date: '2026-05-12', category: 'Events' },
+  { id: 'g7', title: 'Republic Day Parade', url: '/gallery%20images/img7.png', date: '2026-01-26', category: 'Events' },
+  { id: 'g8', title: 'School Building', url: '/gallery%20images/img8.png', date: '2025-06-01', category: 'Campus' },
+  { id: 'g9', title: 'Computer Lab', url: '/gallery%20images/img9.png', date: '2025-06-01', category: 'Campus' },
+  { id: 'g10', title: 'Playground', url: '/gallery%20images/img10.png', date: '2025-06-01', category: 'Campus' },
+];
+
+// ── Gate Passes ──
+export const gatePasses: GatePass[] = [
+  { id: 'gp1', studentId: 's1', studentName: 'Aarav Sharma', reason: 'Doctor appointment', date: '2026-06-08', time: '14:00', status: 'approved', approvedBy: 'Rajesh Gupta' },
+  { id: 'gp2', studentId: 's1', studentName: 'Aarav Sharma', reason: 'Family function', date: '2026-06-15', time: '12:00', status: 'pending' },
+  { id: 'gp3', studentId: 's2', studentName: 'Priya Patel', reason: 'Dental checkup', date: '2026-06-10', time: '10:00', status: 'approved', approvedBy: 'Rajesh Gupta' },
+];
+
+// ── Downloads ──
+export const downloads: DownloadItem[] = [
+  { id: 'd1', title: 'Winter Break Circular', description: 'Official circular regarding winter break schedule.', url: '#', type: 'circular', date: '2026-05-02', fileSize: '245 KB' },
+  { id: 'd2', title: 'Fee Structure 2026-27', description: 'Detailed fee structure for the academic year.', url: '#', type: 'form', date: '2026-03-20', fileSize: '512 KB' },
+  { id: 'd3', title: 'TC Application Form', description: 'Transfer Certificate application form.', url: '#', type: 'form', date: '2026-01-15', fileSize: '180 KB' },
+  { id: 'd4', title: 'Exam Schedule Term 1', description: 'Term 1 examination timetable.', url: '#', type: 'circular', date: '2026-04-10', fileSize: '320 KB' },
+  { id: 'd5', title: 'Annual Report 2025-26', description: 'School annual performance report.', url: '#', type: 'report', date: '2026-03-31', fileSize: '2.1 MB' },
+  { id: 'd6', title: 'Parent Consent Form', description: 'Field trip consent form for parents.', url: '#', type: 'form', date: '2026-05-15', fileSize: '95 KB' },
+];
+
+// ── Transport ──
+export const transportRoutes: TransportRoute[] = [
+  { id: 'tr1', name: 'Route A - North Campus', stops: [{ name: 'Main Gate', time: '07:30' }, { name: 'Lake View', time: '07:45' }, { name: 'Green Park', time: '08:00' }, { name: 'School', time: '08:30' }], driverName: 'Suresh Kumar', driverPhone: '9876500001', vehicleNo: 'UP-14-AB-1234', fee: 4000 },
+  { id: 'tr2', name: 'Route B - South Extension', stops: [{ name: 'Mall Road', time: '07:15' }, { name: 'Railway Station', time: '07:30' }, { name: 'Rose Garden', time: '07:50' }, { name: 'School', time: '08:30' }], driverName: 'Ramesh Singh', driverPhone: '9876500002', vehicleNo: 'UP-14-CD-5678', fee: 4500 },
+  { id: 'tr3', name: 'Route C - East Colony', stops: [{ name: 'Bus Stand', time: '07:00' }, { name: 'Silver Oak', time: '07:20' }, { name: 'Palm Grove', time: '07:40' }, { name: 'School', time: '08:30' }], driverName: 'Mohan Lal', driverPhone: '9876500003', vehicleNo: 'UP-14-EF-9012', fee: 5000 },
+];
+
+// ── Activity Logs ──
+export const activityLogs: ActivityLog[] = [
+  { id: 'al1', action: 'Teacher Verma published Assignment #12 for Class 10-A.', timestamp: '2026-06-03T10:00:00', user: 'Priya Verma', role: 'teacher' },
+  { id: 'al2', action: 'Fee receipt #88921 reconciled for student BBPS-1001.', timestamp: '2026-06-03T09:30:00', user: 'School Admin', role: 'admin' },
+  { id: 'al3', action: 'New announcement: Winter break schedule.', timestamp: '2026-06-02T16:00:00', user: 'School Admin', role: 'admin' },
+  { id: 'al4', action: 'Student Aarav Sharma submitted Physics lab report.', timestamp: '2026-06-02T14:20:00', user: 'Aarav Sharma', role: 'student' },
+  { id: 'al5', action: 'Attendance for Class 10-A marked by Rajesh Gupta.', timestamp: '2026-06-02T09:00:00', user: 'Rajesh Gupta', role: 'teacher' },
+  { id: 'al6', action: 'New student Kavya Reddy enrolled in Class 8-A.', timestamp: '2026-06-01T11:00:00', user: 'School Admin', role: 'admin' },
+  { id: 'al7', action: 'Exam results for Term 1 English published.', timestamp: '2026-05-25T15:00:00', user: 'Sunita Singh', role: 'teacher' },
+  { id: 'al8', action: 'Monthly fee report generated for April 2026.', timestamp: '2026-05-01T10:00:00', user: 'School Admin', role: 'admin' },
+];
+
+// ── Chart Data ──
+export const performanceTrend = [
+  { name: 'T1', score: 72 },
+  { name: 'T2', score: 78 },
+  { name: 'Mid', score: 81 },
+  { name: 'Pre', score: 85 },
+  { name: 'Final', score: 88 },
+];
+
+export const attendanceSeries = [
+  { day: 'Mon', pct: 96 },
+  { day: 'Tue', pct: 94 },
+  { day: 'Wed', pct: 98 },
+  { day: 'Thu', pct: 95 },
+  { day: 'Fri', pct: 97 },
+];
+
+export const schoolKpis = [
+  { label: 'Students', value: 1240 },
+  { label: 'Teachers', value: 86 },
+  { label: 'Classes', value: 42 },
+  { label: 'Attendance', value: 96.2, suffix: '%' as const },
+];
+
+export const todaySchedule = [
+  { time: '09:00', subject: 'Mathematics', room: 'A-201' },
+  { time: '10:00', subject: 'Science Lab', room: 'Lab-2' },
+  { time: '11:15', subject: 'English', room: 'A-105' },
+  { time: '12:45', subject: 'Sports', room: 'Ground' },
+];
+
+// ── Helper Query Functions ──
+export function getStudentById(id: string): Student | undefined {
+  return students.find(s => s.id === id);
+}
+
+export function getTeacherById(id: string): Teacher | undefined {
+  return teachers.find(t => t.id === id);
+}
+
+export function getClassById(id: string): ClassSection | undefined {
+  return classes.find(c => c.id === id);
+}
+
+export function getStudentsByClass(classId: string): Student[] {
+  return students.filter(s => s.classId === classId);
+}
+
+export function getAssignmentsByClass(classId: string): Assignment[] {
+  return assignments.filter(a => a.classId === classId);
+}
+
+export function getAssignmentsByTeacher(teacherId: string): Assignment[] {
+  return assignments.filter(a => a.teacherId === teacherId);
+}
+
+export function getExamsByClass(classId: string): Exam[] {
+  return exams.filter(e => e.classId === classId);
+}
+
+export function getResultsByStudent(studentId: string): ExamResult[] {
+  return examResults.filter(r => r.studentId === studentId);
+}
+
+export function getAttendanceByStudent(studentId: string): Attendance[] {
+  return attendanceRecords.filter(a => a.studentId === studentId);
+}
+
+export function getTimetableByClass(classId: string): TimetableSlot[] {
+  return timetableSlots.filter(t => t.classId === classId);
+}
+
+export function getChatsByUser(userId: string): Chat[] {
+  return chats.filter(c => c.participants.some(p => p.id === userId));
+}
+
+export function getMessagesByChat(chatId: string): Message[] {
+  return messages.filter(m => m.chatId === chatId);
+}
+
+export function getUserApp(user: AppUser): Student | Teacher | undefined {
+  if (user.role === 'teacher') return teachers.find(t => t.userId === user.uid);
+  if (user.role === 'student') return students.find(s => s.userId === user.uid);
+  return undefined;
+}
+
+export function getClassesByTeacher(teacherId: string): ClassSection[] {
+  return classes.filter(c => c.classTeacherId === teacherId || c.subjects.some(s => s.teacherId === teacherId));
+}
