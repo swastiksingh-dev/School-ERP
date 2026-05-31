@@ -475,12 +475,11 @@ function LibrarySection() {
 
 function BirthdaySection() {
   const birthdays = useMemo(() => {
-    const now = new Date();
-    const thisMonth = now.getMonth();
+    const thisMonth = new Date().getMonth();
     return students
       .filter((s) => new Date(s.dob).getMonth() === thisMonth)
       .slice(0, 5);
-  }, []);
+  }, [students]);
   return (
     <div className="space-y-2">
       {birthdays.length === 0 ? (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
@@ -301,9 +301,8 @@ function TimetableTab({ classId }: { classId: string }) {
             </div>
           ))}
           {TIME_SLOTS.map((time) => (
-            <>
+            <React.Fragment key={time}>
               <div
-                key={time}
                 className="flex items-center justify-center rounded-xl bg-slate-50 p-2 text-xs font-semibold text-slate-500 dark:bg-slate-800/50 dark:text-slate-400"
               >
                 {time}
@@ -335,7 +334,7 @@ function TimetableTab({ classId }: { classId: string }) {
                   </div>
                 );
               })}
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>

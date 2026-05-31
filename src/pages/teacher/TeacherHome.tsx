@@ -93,7 +93,8 @@ export function TeacherHome() {
     setApproving(leaveId);
     try {
       const remark = approved ? 'Approved' : 'Rejected — please contact the office';
-      await approveByTeacher(leaveId, user?.firstName + ' ' + user?.lastName || 'Teacher', approved, remark);
+      const teacherName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'Teacher';
+      await approveByTeacher(leaveId, teacherName, approved, remark);
       toast.success(approved ? 'Leave approved' : 'Leave rejected');
       await loadPendingLeaves();
     } catch { toast.error('Failed to process leave'); }

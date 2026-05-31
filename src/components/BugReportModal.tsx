@@ -160,7 +160,7 @@ export default function BugReportModal({ inline = false }: { inline?: boolean })
                           onClick={() => setSeverity(s)}
                           className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg border-2 text-xs font-medium transition-all ${
                             isSelected
-                              ? severityColors[s].replace('border-', 'border-2 ')
+                              ? `border-2 ${severityColors[s].replace('border-', '')}`
                               : 'border-gray-200 dark:border-gray-600 text-gray-500 hover:border-gray-300 dark:hover:border-gray-500'
                           }`}
                         >

@@ -4,7 +4,7 @@
  * panel can review, assign, and resolve them.
  */
 
-import { BugReport } from '../types';
+import type { BugReport } from '../types';
 
 const STORAGE_KEY = 'bbps-bug-reports';
 

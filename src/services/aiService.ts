@@ -6,7 +6,7 @@
  * Supported providers: OpenAI, Google Gemini, Anthropic Claude, Custom
  */
 
-import { AIConfig, AIFeature, AIAnalysis } from '../types';
+import type { AIConfig, AIFeature, AIAnalysis } from '../types';
 
 const AI_CONFIG_KEY = 'bbps-ai-config';
 

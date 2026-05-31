@@ -195,6 +195,16 @@ export function LoginPage() {
           <p className="mt-3 text-[10px] text-slate-400 dark:text-slate-600">
             Blooming Bud Public School ERP — Educational Management System
           </p>
+          <div className="mt-4 flex items-center justify-center gap-4 text-[11px]">
+            <a
+              href="/School-ERP/webmanage"
+              className="text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            >
+              🔧 WebManage Panel
+            </a>
+            <span className="text-slate-300 dark:text-slate-600">·</span>
+            <span className="text-slate-400">Admin access only</span>
+          </div>
         </motion.div>
       </motion.div>
     </div>

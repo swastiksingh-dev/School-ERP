@@ -35,7 +35,7 @@ import {
   Wifi,
   Zap,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
@@ -82,7 +82,7 @@ export function WebManage() {
   const [logs, setLogs] = useState<ManagementAction[]>([]);
 
   /* ── Load data (defined before hooks, before conditional return) ── */
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       const [bugList, stats, config] = await Promise.all([
@@ -100,7 +100,7 @@ export function WebManage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /* ── Derived data ── */
   const filteredBugs = useMemo(() => {
@@ -118,7 +118,7 @@ export function WebManage() {
   /* ── Hooks must be at top level, before conditional returns ── */
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   /* ── Redirect if not admin ── */
   if (!authLoading && (!user || user.role !== 'admin')) {
