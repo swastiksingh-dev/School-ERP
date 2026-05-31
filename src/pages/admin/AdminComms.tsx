@@ -284,7 +284,7 @@ export function AdminComms() {
                 {announcementsList.map((ann) => (
                   <div key={ann.id} className="rounded-lg border border-slate-100 p-3 dark:border-slate-800">
                     <p className="text-sm font-medium text-slate-900 dark:text-white">{ann.title}</p>
-                    <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                       <div>
                         <p className="text-slate-400">Sent to</p>
                         <p className="font-medium text-slate-700 dark:text-slate-200">1,240</p>

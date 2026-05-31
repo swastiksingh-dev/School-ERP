@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { ResponsiveContainer, Tooltip, XAxis, YAxis, AreaChart, Area } from 'recharts';
-import { Award, BookOpen, Calendar, CalendarCheck, CheckSquare, Clock, FileText, GraduationCap, PlusCircle, ScrollText, Star, Target, Users } from 'lucide-react';
+import { Award, BookOpen, Calendar, CalendarCheck, CheckSquare, CheckCircle, XCircle, Clock, FileText, GraduationCap, Loader2, MessageSquare, PlusCircle, ScrollText, Star, Target, Users } from 'lucide-react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { STAGGER } from '../../constants/animations';
@@ -9,6 +9,9 @@ import { useAuth } from '../../hooks/useAuth';
 import { useAssignmentsByTeacher, useClassesByTeacher, useTimetable } from '../../hooks/queries';
 import { attendanceRecords, attendanceSeries, exams, getStudentsByClass, submissions } from '../../data/mock';
 import { useNavigate } from 'react-router-dom';
+import { getLeavesByClass, approveByTeacher } from '../../services/leaveService';
+import type { LeaveApplication } from '../../types';
+import toast from 'react-hot-toast';
 
 export function TeacherHome() {
   const { user } = useAuth();
@@ -69,6 +72,33 @@ export function TeacherHome() {
     }));
     return [...examEvts, ...assignEvts].sort((a, b) => a.date.localeCompare(b.date));
   }, [classIds, myClasses, myAssignments]);
+
+  const [pendingLeaves, setPendingLeaves] = useState<LeaveApplication[]>([]);
+  const [loadingLeaves, setLoadingLeaves] = useState(true);
+  const [approving, setApproving] = useState<string | null>(null);
+
+  const loadPendingLeaves = useCallback(async () => {
+    if (classIds.length === 0) return;
+    setLoadingLeaves(true);
+    try {
+      const leaves = await getLeavesByClass(classIds);
+      setPendingLeaves(leaves.filter(l => l.status === 'pending_teacher'));
+    } catch { /* ignore */ }
+    setLoadingLeaves(false);
+  }, [classIds]);
+
+  useEffect(() => { loadPendingLeaves(); }, [loadPendingLeaves]);
+
+  const handleApproveLeave = async (leaveId: string, approved: boolean) => {
+    setApproving(leaveId);
+    try {
+      const remark = approved ? 'Approved' : 'Rejected — please contact the office';
+      await approveByTeacher(leaveId, user?.firstName + ' ' + user?.lastName || 'Teacher', approved, remark);
+      toast.success(approved ? 'Leave approved' : 'Leave rejected');
+      await loadPendingLeaves();
+    } catch { toast.error('Failed to process leave'); }
+    setApproving(null);
+  };
 
   return (
     <motion.div variants={STAGGER.container} initial="hidden" animate="show" className="space-y-6">
@@ -163,7 +193,55 @@ export function TeacherHome() {
         </motion.div>
       </div>
 
-      <motion.div variants={STAGGER.item(4)} className="grid gap-4 sm:grid-cols-2">
+      <motion.div variants={STAGGER.item(4)} className="space-y-4">
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-display text-lg font-semibold text-slate-900 dark:text-white">
+              <MessageSquare className="mr-2 inline h-5 w-5 text-slate-400" />
+              Leave Requests ({pendingLeaves.length})
+            </h3>
+          </div>
+          {loadingLeaves ? (
+            <div className="flex justify-center py-6"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
+          ) : pendingLeaves.length === 0 ? (
+            <p className="text-sm text-slate-400 py-4 text-center">No pending leave requests.</p>
+          ) : (
+            <div className="space-y-3">
+              {pendingLeaves.map((lv) => (
+                <div key={lv.id} className="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-slate-900 dark:text-white">{lv.studentName}</p>
+                      <p className="text-xs text-slate-500">{lv.className} · {lv.type} · {lv.daysCount}d ({lv.startDate} → {lv.endDate})</p>
+                      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{lv.reason}</p>
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        onClick={() => handleApproveLeave(lv.id, true)}
+                        disabled={approving === lv.id}
+                        className="flex items-center gap-1 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 dark:bg-emerald-900/20 dark:text-emerald-300 dark:hover:bg-emerald-900/30"
+                      >
+                        {approving === lv.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleApproveLeave(lv.id, false)}
+                        disabled={approving === lv.id}
+                        className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                      >
+                        <XCircle className="h-3.5 w-3.5" />
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </motion.div>
+
+      <motion.div variants={STAGGER.item(5)} className="grid gap-4 sm:grid-cols-2">
         <Card>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="font-display text-lg font-semibold text-slate-900 dark:text-white">

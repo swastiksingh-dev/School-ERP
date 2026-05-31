@@ -1,11 +1,13 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Search, UserPlus, ChevronDown, ChevronUp, Mail, Phone, MapPin, Calendar, Droplets, BookOpen, Briefcase, Upload, Download, ToggleLeft, Key, History, Activity } from 'lucide-react';
+import { Search, UserPlus, ChevronDown, ChevronUp, Mail, Phone, MapPin, Calendar, Droplets, BookOpen, Briefcase, Upload, Download, ToggleLeft, Key, History, Activity, Eye, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { STAGGER } from '../../constants/animations';
 import { students, teachers, activityLogs } from '../../data/mock';
+import { demoCredentials, changePassword } from '../../services/authService';
+import type { Student, Teacher } from '../../types';
 
 type Tab = 'students' | 'teachers' | 'admins' | 'audit';
 
@@ -20,6 +22,8 @@ export function AdminUsers() {
   const [showForm, setShowForm] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [resetUserId, setResetUserId] = useState<string | null>(null);
+  const [resetData, setResetData] = useState({ newSchoolId: '', newPassword: '', confirmPassword: '' });
+  const [viewProfileUser, setViewProfileUser] = useState<Student | Teacher | null>(null);
   const [userStatuses, setUserStatuses] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem('bbps-user-statuses') || '{}'); }
     catch { return {}; }
@@ -44,6 +48,10 @@ export function AdminUsers() {
       t.email.toLowerCase().includes(q) || t.department.toLowerCase().includes(q)
     );
   }, [search]);
+
+  const findDemoCred = useCallback((schoolId: string) => {
+    return demoCredentials.find(c => c.schoolId === schoolId || c.employeeId === schoolId || c.uid === schoolId);
+  }, []);
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
     { key: 'students', label: 'Students', count: students.length },
@@ -152,10 +160,16 @@ export function AdminUsers() {
                       <span className="text-xs text-slate-500">{userStatuses[s.id] !== false ? 'Active' : 'Inactive'}</span>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); setResetUserId(s.id); }}
+                      onClick={(e) => { e.stopPropagation(); setViewProfileUser(s); }}
+                      className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
+                    >
+                      <Eye className="h-3.5 w-3.5" /> View Profile
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setResetUserId(s.schoolId); setResetData({ newSchoolId: '', newPassword: '', confirmPassword: '' }); }}
                       className="flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700"
                     >
-                      <Key className="h-3.5 w-3.5" /> Reset Password
+                      <Key className="h-3.5 w-3.5" /> Reset Credentials
                     </button>
                   </div>
                 </div>
@@ -214,10 +228,16 @@ export function AdminUsers() {
                       <span className="text-xs text-slate-500">{userStatuses[t.id] !== false ? 'Active' : 'Inactive'}</span>
                     </div>
                     <button
-                      onClick={(e) => { e.stopPropagation(); setResetUserId(t.id); }}
+                      onClick={(e) => { e.stopPropagation(); setViewProfileUser(t); }}
+                      className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700"
+                    >
+                      <Eye className="h-3.5 w-3.5" /> View Profile
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setResetUserId(t.id); setResetData({ newSchoolId: '', newPassword: '', confirmPassword: '' }); }}
                       className="flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700"
                     >
-                      <Key className="h-3.5 w-3.5" /> Reset Password
+                      <Key className="h-3.5 w-3.5" /> Reset Credentials
                     </button>
                   </div>
                 </div>
@@ -286,6 +306,92 @@ export function AdminUsers() {
         </div>
       )}
 
+      {viewProfileUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setViewProfileUser(null)}>
+          <div className="mx-4 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display text-lg font-semibold text-slate-900 dark:text-white">User Profile</h3>
+              <button onClick={() => setViewProfileUser(null)} className="rounded-full p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="flex items-center gap-4 mb-5">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700 dark:bg-brand-900/40 dark:text-brand-200">
+                {'firstName' in viewProfileUser ? `${viewProfileUser.firstName[0]}${viewProfileUser.lastName[0]}` : ''}
+              </div>
+              <div>
+                <p className="font-display text-lg font-bold text-slate-900 dark:text-white">{viewProfileUser.firstName} {viewProfileUser.lastName}</p>
+                {'schoolId' in viewProfileUser && <p className="text-xs text-slate-500">ID: {viewProfileUser.schoolId}</p>}
+                {'department' in viewProfileUser && <p className="text-xs text-slate-500">{viewProfileUser.department}</p>}
+                {'classId' in viewProfileUser && <p className="text-xs text-slate-500">Class: {viewProfileUser.classId}</p>}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Email</p>
+                <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.email}</p>
+              </div>
+              <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Phone</p>
+                <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.phone}</p>
+              </div>
+              {'address' in viewProfileUser && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Address</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.address}</p>
+                </div>
+              )}
+              {'classId' in viewProfileUser && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Roll No</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.rollNumber}</p>
+                </div>
+              )}
+              {'dob' in viewProfileUser && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">DOB</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.dob}</p>
+                </div>
+              )}
+              {'bloodGroup' in viewProfileUser && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Blood Group</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.bloodGroup}</p>
+                </div>
+              )}
+              {'parentName' in viewProfileUser && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Parent</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.parentName}</p>
+                </div>
+              )}
+              {'parentPhone' in viewProfileUser && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Parent Phone</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.parentPhone}</p>
+                </div>
+              )}
+              {'department' in viewProfileUser && viewProfileUser.department && (
+                <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Department</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.department}</p>
+                </div>
+              )}
+              {'subjects' in viewProfileUser && (
+                <div className="col-span-2 rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Subjects</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.subjects.join(', ')}</p>
+                </div>
+              )}
+              {'assignedClasses' in viewProfileUser && (
+                <div className="col-span-2 rounded-lg bg-slate-50 p-3 dark:bg-slate-800">
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Assigned Classes</p>
+                  <p className="font-medium text-slate-800 dark:text-slate-200">{viewProfileUser.assignedClasses.join(', ')}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowForm(false)}>
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
@@ -313,13 +419,69 @@ export function AdminUsers() {
       )}
 
       {resetUserId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setResetUserId(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => { setResetUserId(null); setResetData({ newSchoolId: '', newPassword: '', confirmPassword: '' }); }}>
           <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
-            <h3 className="mb-2 font-display text-lg font-semibold text-slate-900 dark:text-white">Reset Password</h3>
-            <p className="mb-4 text-sm text-slate-500">A password reset link will be sent to the user's email address.</p>
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setResetUserId(null)}>Cancel</Button>
-              <Button onClick={() => { toast.success('Password reset link sent'); setResetUserId(null); }}>Send Reset Link</Button>
+            <h3 className="mb-1 font-display text-lg font-semibold text-slate-900 dark:text-white">Reset Credentials</h3>
+            <p className="mb-4 text-xs text-slate-500">Update School/Employee ID and/or password for this user.</p>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-slate-500">New School/Employee ID</label>
+                <input
+                  type="text"
+                  value={resetData.newSchoolId}
+                  onChange={e => setResetData(p => ({ ...p, newSchoolId: e.target.value }))}
+                  placeholder="Leave empty to keep current"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">New Password</label>
+                <input
+                  type="password"
+                  value={resetData.newPassword}
+                  onChange={e => setResetData(p => ({ ...p, newPassword: e.target.value }))}
+                  placeholder="Leave empty to keep current"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Confirm New Password</label>
+                <input
+                  type="password"
+                  value={resetData.confirmPassword}
+                  onChange={e => setResetData(p => ({ ...p, confirmPassword: e.target.value }))}
+                  placeholder="Re-enter new password"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="ghost" onClick={() => { setResetUserId(null); setResetData({ newSchoolId: '', newPassword: '', confirmPassword: '' }); }}>Cancel</Button>
+                <Button onClick={() => {
+                  if (resetData.newPassword && resetData.newPassword.length < 6) {
+                    toast.error('Password must be at least 6 characters');
+                    return;
+                  }
+                  if (resetData.newPassword !== resetData.confirmPassword) {
+                    toast.error('Passwords do not match');
+                    return;
+                  }
+                  const cred = findDemoCred(resetUserId);
+                  if (!cred) { toast.error('User not found in demo credentials'); setResetUserId(null); return; }
+                  if (resetData.newPassword) {
+                    const result = changePassword(cred.schoolId, cred.password, resetData.newPassword);
+                    if (!result.success) { toast.error(result.error || 'Failed'); return; }
+                  }
+                  if (resetData.newSchoolId) {
+                    cred.schoolId = resetData.newSchoolId;
+                    if (cred.employeeId) cred.employeeId = resetData.newSchoolId;
+                    const student = students.find(s => s.schoolId === resetUserId || s.id === resetUserId);
+                    if (student) student.schoolId = resetData.newSchoolId;
+                  }
+                  toast.success('Credentials updated successfully!');
+                  setResetUserId(null);
+                  setResetData({ newSchoolId: '', newPassword: '', confirmPassword: '' });
+                }}>Save Changes</Button>
+              </div>
             </div>
           </div>
         </div>

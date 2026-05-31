@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import BugReportModal from '../../components/BugReportModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -25,6 +25,7 @@ import {
   XCircle,
   Building,
   Bug,
+  Loader2,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card } from '../../components/ui/Card';
@@ -37,7 +38,9 @@ import {
   transportRoutes,
   students,
 } from '../../data/mock';
-import type { GalleryItem } from '../../types';
+import type { GalleryItem, LeaveApplication } from '../../types';
+import { submitLeaveApplication, getLeavesByStudent } from '../../services/leaveService';
+import toast from 'react-hot-toast';
 
 const STUDENT_ID = 's1';
 
@@ -151,7 +154,7 @@ function GallerySection() {
           <p className="text-xs text-slate-500">Est. 2002 · CBSE Affiliated</p>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {data.slice(0, 6).map((item) => (
           <button
             key={item.id}
@@ -498,34 +501,119 @@ function BirthdaySection() {
 }
 
 function LeaveSection() {
-  const [leaveReason, setLeaveReason] = useState('');
-  const [leaveDates, setLeaveDates] = useState('');
-  const handleLeaveSubmit = () => {
-    if (!leaveReason.trim() || !leaveDates) return;
-    toast.success('Leave application submitted!');
-    setLeaveReason('');
-    setLeaveDates('');
+  const [reason, setReason] = useState('');
+  const [leaveType, setLeaveType] = useState<'sick' | 'personal' | 'emergency' | 'other'>('sick');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [myLeaves, setMyLeaves] = useState<LeaveApplication[]>([]);
+  const [loadingLeaves, setLoadingLeaves] = useState(true);
+
+  const loadLeaves = useCallback(async () => {
+    setLoadingLeaves(true);
+    try {
+      const data = await getLeavesByStudent(STUDENT_ID);
+      setMyLeaves(data);
+    } catch { /* ignore */ }
+    setLoadingLeaves(false);
+  }, []);
+
+  useEffect(() => { loadLeaves(); }, [loadLeaves]);
+
+  const handleSubmit = async () => {
+    if (!reason.trim() || !startDate || !endDate) {
+      toast.error('Please fill all fields');
+      return;
+    }
+    if (new Date(endDate) < new Date(startDate)) {
+      toast.error('End date must be after start date');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await submitLeaveApplication({
+        studentId: STUDENT_ID, studentName: 'Aarav Sharma',
+        classId: 'c1', className: '10-A',
+        reason: reason.trim(), type: leaveType,
+        startDate, endDate,
+      });
+      toast.success('Leave application submitted!');
+      setReason(''); setStartDate(''); setEndDate('');
+      await loadLeaves();
+    } catch { toast.error('Failed to submit leave'); }
+    setSubmitting(false);
   };
+
+  const statusBadge = (status: LeaveApplication['status']) => {
+    const map: Record<string, string> = {
+      pending_teacher: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200',
+      pending_principal: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-200',
+      approved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200',
+      rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200',
+    };
+    const labels: Record<string, string> = {
+      pending_teacher: 'Teacher pending',
+      pending_principal: 'Principal pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+    };
+    return (
+      <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${map[status] || ''}`}>
+        {labels[status] || status}
+      </span>
+    );
+  };
+
   return (
-    <div className="space-y-3">
-      <input
-        value={leaveReason}
-        onChange={(e) => setLeaveReason(e.target.value)}
-        placeholder="Reason for leave…"
-        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-      />
-      <input
-        type="text"
-        value={leaveDates}
-        onChange={(e) => setLeaveDates(e.target.value)}
-        placeholder="Dates (e.g. June 10–12)"
-        className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-      />
-      <Button variant="primary" className="w-full" onClick={handleLeaveSubmit} disabled={!leaveReason.trim() || !leaveDates}>
-        Submit leave
-      </Button>
-      <div className="rounded-lg border border-amber-100 bg-amber-50 p-2 text-center text-xs text-amber-700 dark:border-amber-900/40 dark:bg-amber-900/20 dark:text-amber-200">
-        Pending approval · 2 leaves used this term
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Reason for leave…"
+          className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+        />
+        <div className="grid grid-cols-2 gap-2">
+          <select
+            value={leaveType}
+            onChange={(e) => setLeaveType(e.target.value as typeof leaveType)}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+          >
+            <option value="sick">Sick Leave</option>
+            <option value="personal">Personal Leave</option>
+            <option value="emergency">Emergency</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" />
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" />
+        </div>
+        <Button variant="primary" className="w-full" onClick={handleSubmit} disabled={submitting || !reason.trim() || !startDate || !endDate}>
+          {submitting ? 'Submitting…' : 'Submit Leave'}
+        </Button>
+      </div>
+      <div className="border-t border-slate-100 pt-3 dark:border-slate-800">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">My Leaves</p>
+        {loadingLeaves ? (
+          <div className="flex justify-center py-4"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
+        ) : myLeaves.length === 0 ? (
+          <p className="text-sm text-slate-400">No leave applications yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {myLeaves.slice(0, 5).map((lv) => (
+              <div key={lv.id} className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2 dark:border-slate-800">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{lv.reason}</p>
+                  <p className="text-xs text-slate-500">{lv.startDate} → {lv.endDate} ({lv.daysCount}d) · {lv.type}</p>
+                </div>
+                {statusBadge(lv.status)}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -633,8 +721,6 @@ const sections = [
   { id: 'hostel', title: 'Hostel Info', icon: Building, component: HostelInfoSection },
   { id: 'bugreport', title: 'Report Bug', icon: Bug, component: () => <BugReportModal inline /> },
 ];
-
-import toast from 'react-hot-toast';
 
 export function StudentMore() {
   return (

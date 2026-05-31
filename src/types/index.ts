@@ -338,6 +338,27 @@ export interface SystemHealth {
   version: string;
 }
 
+/* ─── Leave Management ─── */
+export type LeaveStatus = 'pending_teacher' | 'pending_principal' | 'approved' | 'rejected';
+export type LeaveType = 'sick' | 'personal' | 'emergency' | 'other';
+
+export interface LeaveApplication {
+  id: string;
+  studentId: string;
+  studentName: string;
+  classId: string;
+  className: string;
+  reason: string;
+  type: LeaveType;
+  startDate: string;
+  endDate: string;
+  daysCount: number;
+  status: LeaveStatus;
+  teacherApproval?: { approved: boolean; by: string; at: string; remark: string };
+  principalApproval?: { approved: boolean; by: string; at: string; remark: string };
+  submittedAt: string;
+}
+
 export interface ManagementAction {
   id: string;
   type: 'bug_fix' | 'user_action' | 'system_update' | 'content_moderation';

@@ -8,7 +8,7 @@ import type {
   Exam, ExamResult, Attendance, TimetableSlot, Message, Chat,
   Announcement, FeeInvoice, FeeTransaction, ContentResource,
   GalleryItem, GatePass, DownloadItem, TransportRoute, ActivityLog,
-  AppUser,
+  AppUser, LeaveApplication,
 } from '../types';
 
 // ── Students ──
@@ -210,6 +210,16 @@ export const gatePasses: GatePass[] = [
   { id: 'gp1', studentId: 's1', studentName: 'Aarav Sharma', reason: 'Doctor appointment', date: '2026-06-08', time: '14:00', status: 'approved', approvedBy: 'Rajesh Gupta' },
   { id: 'gp2', studentId: 's1', studentName: 'Aarav Sharma', reason: 'Family function', date: '2026-06-15', time: '12:00', status: 'pending' },
   { id: 'gp3', studentId: 's2', studentName: 'Priya Patel', reason: 'Dental checkup', date: '2026-06-10', time: '10:00', status: 'approved', approvedBy: 'Rajesh Gupta' },
+];
+
+// ── Leave Applications ──
+export const leaveApplications: LeaveApplication[] = [
+  { id: 'lv1', studentId: 's1', studentName: 'Aarav Sharma', classId: 'c1', className: '10-A', reason: 'High fever and doctor advised rest for 3 days', type: 'sick', startDate: '2026-06-10', endDate: '2026-06-12', daysCount: 3, status: 'approved', teacherApproval: { approved: true, by: 'Rajesh Gupta', at: '2026-06-09T10:30:00', remark: 'Take rest and recover' }, submittedAt: '2026-06-09T08:15:00' },
+  { id: 'lv2', studentId: 's1', studentName: 'Aarav Sharma', classId: 'c1', className: '10-A', reason: 'Family wedding out of town', type: 'personal', startDate: '2026-07-05', endDate: '2026-07-07', daysCount: 3, status: 'pending_teacher', submittedAt: '2026-06-20T09:00:00' },
+  { id: 'lv3', studentId: 's2', studentName: 'Priya Patel', classId: 'c1', className: '10-A', reason: 'Medical surgery recovery — need 2 weeks off', type: 'sick', startDate: '2026-07-01', endDate: '2026-07-14', daysCount: 14, status: 'pending_teacher', submittedAt: '2026-06-25T14:20:00' },
+  { id: 'lv4', studentId: 's5', studentName: 'Vikram Joshi', classId: 'c2', className: '9-B', reason: 'Participating in national level swimming competition', type: 'other', startDate: '2026-06-15', endDate: '2026-06-20', daysCount: 6, status: 'pending_principal', teacherApproval: { approved: true, by: 'Priya Verma', at: '2026-06-13T11:00:00', remark: 'Good opportunity, recommend approval' }, submittedAt: '2026-06-12T07:45:00' },
+  { id: 'lv5', studentId: 's8', studentName: 'Kavya Reddy', classId: 'c3', className: '8-A', reason: 'Grandfather passed away — funeral in hometown', type: 'emergency', startDate: '2026-06-18', endDate: '2026-06-21', daysCount: 4, status: 'approved', teacherApproval: { approved: true, by: 'Sunita Singh', at: '2026-06-17T09:00:00', remark: 'Condolences, approved' }, principalApproval: { approved: true, by: 'School Administrator', at: '2026-06-17T14:00:00', remark: 'Approved' }, submittedAt: '2026-06-17T07:00:00' },
+  { id: 'lv6', studentId: 's3', studentName: 'Rohan Singh', classId: 'c1', className: '10-A', reason: 'Not feeling well', type: 'sick', startDate: '2026-06-28', endDate: '2026-06-28', daysCount: 1, status: 'rejected', teacherApproval: { approved: false, by: 'Rajesh Gupta', at: '2026-06-27T16:00:00', remark: 'Please submit a medical certificate' }, submittedAt: '2026-06-27T12:30:00' },
 ];
 
 // ── Downloads ──

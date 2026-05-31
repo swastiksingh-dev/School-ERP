@@ -51,7 +51,7 @@ export function AdminAcademic() {
         </div>
       </motion.div>
 
-      <motion.div variants={STAGGER.item(1)} className="grid grid-cols-3 gap-4">
+      <motion.div variants={STAGGER.item(1)} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Total Subjects', value: subjects.length, color: 'text-brand-600' },
           { label: 'Exams This Term', value: exams.filter(e => e.status === 'upcoming').length, color: 'text-amber-600' },

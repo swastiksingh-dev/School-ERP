@@ -1,10 +1,14 @@
 import { motion } from 'framer-motion';
-import { Activity, Bell, Plus, Users, FileText, ClipboardList, CalendarDays } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Activity, Bell, Plus, Users, FileText, ClipboardList, CalendarDays, CheckCircle, XCircle, Loader2, MessageSquare } from 'lucide-react';
 import { Pie, PieChart, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { STAGGER } from '../../constants/animations';
 import { schoolKpis, activityLogs } from '../../data/mock';
+import { getPendingPrincipalLeaves, approveByPrincipal } from '../../services/leaveService';
+import type { LeaveApplication } from '../../types';
+import toast from 'react-hot-toast';
 
 const pie = [
   { name: 'Present', value: 96 },
@@ -36,6 +40,30 @@ function timeAgo(ts: string) {
 
 export function AdminHome() {
   const recentLogs = activityLogs.slice(0, 6);
+  const [principalLeaves, setPrincipalLeaves] = useState<LeaveApplication[]>([]);
+  const [loadingPrincipalLeaves, setLoadingPrincipalLeaves] = useState(true);
+  const [approvingLeave, setApprovingLeave] = useState<string | null>(null);
+
+  const loadPrincipalLeaves = useCallback(async () => {
+    setLoadingPrincipalLeaves(true);
+    try {
+      const data = await getPendingPrincipalLeaves();
+      setPrincipalLeaves(data);
+    } catch { /* ignore */ }
+    setLoadingPrincipalLeaves(false);
+  }, []);
+
+  useEffect(() => { loadPrincipalLeaves(); }, [loadPrincipalLeaves]);
+
+  const handlePrincipalApprove = async (leaveId: string, approved: boolean) => {
+    setApprovingLeave(leaveId);
+    try {
+      await approveByPrincipal(leaveId, 'School Administrator', approved, approved ? 'Approved by Principal' : 'Rejected by Principal');
+      toast.success(approved ? 'Leave approved' : 'Leave rejected');
+      await loadPrincipalLeaves();
+    } catch { toast.error('Failed to process'); }
+    setApprovingLeave(null);
+  };
 
   return (
     <motion.div variants={STAGGER.container} initial="hidden" animate="show" className="space-y-6">
@@ -125,6 +153,57 @@ export function AdminHome() {
 
       <motion.div variants={STAGGER.item(5)}>
         <Card>
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="font-display text-lg font-semibold text-slate-900 dark:text-white">
+              <MessageSquare className="mr-2 inline h-5 w-5 text-slate-400" />
+              Principal Leave Approvals ({principalLeaves.length})
+            </h3>
+          </div>
+          {loadingPrincipalLeaves ? (
+            <div className="flex justify-center py-6"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
+          ) : principalLeaves.length === 0 ? (
+            <p className="py-4 text-center text-sm text-slate-400">No leaves pending principal approval.</p>
+          ) : (
+            <div className="space-y-3">
+              {principalLeaves.map((lv) => (
+                <div key={lv.id} className="rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-slate-900 dark:text-white">{lv.studentName} · {lv.className}</p>
+                      <p className="text-xs text-slate-500">{lv.daysCount} days ({lv.startDate} → {lv.endDate}) · {lv.type}</p>
+                      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{lv.reason}</p>
+                      {lv.teacherApproval && (
+                        <p className="mt-1 text-xs text-emerald-600">✓ Teacher approved by {lv.teacherApproval.by}</p>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        onClick={() => handlePrincipalApprove(lv.id, true)}
+                        disabled={approvingLeave === lv.id}
+                        className="flex items-center gap-1 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 dark:bg-emerald-900/20 dark:text-emerald-300"
+                      >
+                        {approvingLeave === lv.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handlePrincipalApprove(lv.id, false)}
+                        disabled={approvingLeave === lv.id}
+                        className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50 dark:bg-red-900/20 dark:text-red-300"
+                      >
+                        <XCircle className="h-3.5 w-3.5" />
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </motion.div>
+
+      <motion.div variants={STAGGER.item(6)}>
+        <Card>
           <h3 className="mb-3 font-display text-lg font-semibold text-slate-900 dark:text-white">Recent activity</h3>
           <ul className="space-y-3">
             {recentLogs.map((log) => (
@@ -142,7 +221,7 @@ export function AdminHome() {
         </Card>
       </motion.div>
 
-      <motion.div variants={STAGGER.item(6)}>
+      <motion.div variants={STAGGER.item(7)}>
         <Card>
           <h3 className="mb-3 font-display text-lg font-semibold text-slate-900 dark:text-white">Enrollment Trend</h3>
           <div className="h-52">
@@ -160,7 +239,7 @@ export function AdminHome() {
       </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <motion.div variants={STAGGER.item(7)}>
+        <motion.div variants={STAGGER.item(8)}>
           <Card>
             <h3 className="mb-3 font-display text-lg font-semibold text-slate-900 dark:text-white">Gender Ratio</h3>
             <div className="flex items-center gap-6">
@@ -182,7 +261,7 @@ export function AdminHome() {
             </div>
           </Card>
         </motion.div>
-        <motion.div variants={STAGGER.item(8)}>
+        <motion.div variants={STAGGER.item(9)}>
           <Card>
             <h3 className="mb-3 font-display text-lg font-semibold text-slate-900 dark:text-white">Teacher-to-Student Ratio</h3>
             <div className="flex h-36 items-center justify-center">
@@ -195,7 +274,7 @@ export function AdminHome() {
         </motion.div>
       </div>
 
-      <motion.div variants={STAGGER.item(9)} className="grid gap-4 sm:grid-cols-3">
+      <motion.div variants={STAGGER.item(10)} className="grid gap-4 sm:grid-cols-3">
         <Card>
           <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40"><Activity className="h-4 w-4" /></span>
@@ -225,7 +304,7 @@ export function AdminHome() {
         </Card>
       </motion.div>
 
-      <motion.div variants={STAGGER.item(10)}>
+      <motion.div variants={STAGGER.item(11)}>
         <Card>
           <h3 className="mb-3 flex items-center gap-2 font-display text-lg font-semibold text-slate-900 dark:text-white">
             <CalendarDays className="h-5 w-5 text-brand-500" />

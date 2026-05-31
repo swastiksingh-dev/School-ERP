@@ -41,7 +41,7 @@ export function TeacherProfile() {
 
       <motion.div variants={STAGGER.item(1)}>
         <Card>
-          <div className="flex items-start gap-5">
+          <div className="flex flex-wrap items-start gap-5">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-100 text-3xl font-bold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </div>
